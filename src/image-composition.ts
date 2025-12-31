@@ -1,5 +1,5 @@
 import walletImageUrl from './images/blank wallet image.png';
-import type { WalletKeys } from './types';
+import type { WalletKeys } from '../types/types';
 import { generateQRCodeDataURL, createQRCodeImage } from './qr-code';
 
 const COMPOSITION_CONFIG = {
@@ -52,7 +52,6 @@ const drawQRCode = (
   y: number,
   size: number
 ): void => {
-  // Draw QR code (no background, no border)
   ctx.drawImage(qrImage, x, y, size, size);
 };
 
@@ -77,12 +76,9 @@ const drawKeyText = (
   if (rotation !== 0) {
     // Translate to the rotation point
     ctx.translate(x, y);
-    // Rotate (rotation is in radians, 270 degrees = -90 degrees = -Math.PI/2)
     ctx.rotate((rotation * Math.PI) / 180);
-    // Draw text at origin (since we translated)
     ctx.fillText(text, 0, 0);
   } else {
-    // Draw text normally without rotation
     ctx.fillText(text, x, y);
   }
 
@@ -266,6 +262,54 @@ export const generateCompositeImage = async (wallet: WalletKeys): Promise<string
     });
   }
 
+  return canvas.toDataURL('image/png');
+};
+
+export const generateMultiWalletCompositeImage = async (wallets: WalletKeys[]): Promise<string> => {
+  // Wait for fonts to load
+  await document.fonts.ready;
+  await document.fonts.load(`${COMPOSITION_CONFIG.satoshisTextStyle.fontSize}px Asset`);
+
+  // Generate individual wallet images
+  const walletImages: string[] = [];
+  for (const wallet of wallets) {
+    const walletImage = await generateCompositeImage(wallet);
+    walletImages.push(walletImage);
+  }
+
+  // Load all wallet images
+  const loadedImages = await Promise.all(
+    walletImages.map(imgDataURL => loadImage(imgDataURL))
+  );
+
+  // Stack wallets vertically in a single column
+  // Get dimensions of a single wallet image (all should be the same size)
+  const singleWalletWidth = loadedImages[0].width;
+  const singleWalletHeight = loadedImages[0].height;
+  
+  // Calculate spacing between wallets (20px gap)
+  const gap = 20;
+  const padding = 40; // Page padding
+  
+  // Calculate total canvas dimensions - single column, stacked vertically
+  const totalWidth = singleWalletWidth + (padding * 2);
+  const totalHeight = (singleWalletHeight * wallets.length) + (gap * (wallets.length - 1)) + (padding * 2);
+  
+  // Create canvas for multi-wallet layout
+  const { canvas, ctx } = createCanvas(totalWidth, totalHeight);
+  
+  // Fill background with white
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, totalWidth, totalHeight);
+  
+  // Draw each wallet image stacked vertically
+  for (let i = 0; i < loadedImages.length; i++) {
+    const x = padding;
+    const y = padding + (i * (singleWalletHeight + gap));
+    
+    ctx.drawImage(loadedImages[i], x, y);
+  }
+  
   return canvas.toDataURL('image/png');
 };
 

@@ -7,6 +7,26 @@ const PRINT_STYLES = `
     body {
       margin: 0;
       padding: 0;
+      background: white;
+    }
+    .wallet-page {
+      page-break-inside: avoid;
+      break-inside: avoid;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0;
+      padding: 0;
+    }
+    .print-image {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+      page-break-inside: avoid;
+      break-inside: avoid;
+      display: block;
     }
   }
   * {
@@ -17,28 +37,46 @@ const PRINT_STYLES = `
   body {
     margin: 0;
     padding: 0;
+    background: white;
+  }
+  .wallet-page {
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    background: white;
+    margin-bottom: 0;
+    padding: 0;
   }
   .print-image {
     max-width: 100%;
-    max-height: 100vh;
     width: auto;
     height: auto;
     object-fit: contain;
+    display: block;
   }
   @media screen {
     body {
       background: #f0f0f0;
       padding: 20px;
     }
+    .wallet-page {
+      margin-bottom: 20px;
+      padding: 20px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
   }
 `;
 
-const createPrintHTML = (imageDataURL: string): string => {
+const createPrintHTML = (imageDataURLs: string | string[]): string => {
+  const images = Array.isArray(imageDataURLs) ? imageDataURLs : [imageDataURLs];
+  
+  const walletPages = images.map((img, index) => 
+    `<div class="wallet-page">
+      <img src="${img}" class="print-image" alt="Bitcoin Wallet ${index + 1}" />
+    </div>`
+  ).join('\n');
+  
   return `
     <!DOCTYPE html>
     <html>
@@ -47,7 +85,7 @@ const createPrintHTML = (imageDataURL: string): string => {
       <style>${PRINT_STYLES}</style>
     </head>
     <body>
-      <img src="${imageDataURL}" class="print-image" alt="Bitcoin Wallet" />
+      ${walletPages}
     </body>
     </html>
   `;
@@ -68,13 +106,20 @@ const triggerPrint = (printWindow: Window): void => {
 };
 
 export const printWallet = (): void => {
+  const individualImages = (window as any).individualWalletImages;
   const compositeImage = (window as any).compositeWalletImage;
+  
   if (!compositeImage) {
-    alert('Please generate a wallet first');
+    alert('Please generate wallet(s) first');
     return;
   }
 
-  const printHTML = createPrintHTML(compositeImage);
+  // Use individual images if available (for proper page breaks), otherwise use composite
+  const imagesToPrint = individualImages && individualImages.length > 0 
+    ? individualImages 
+    : [compositeImage];
+  
+  const printHTML = createPrintHTML(imagesToPrint);
   const printWindow = openPrintWindow(printHTML);
   triggerPrint(printWindow);
 };

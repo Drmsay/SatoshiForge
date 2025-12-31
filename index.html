@@ -122,21 +122,6 @@
             background: #5568d3;
         }
 
-        .warning {
-            background: #fff3cd;
-            border: 1px solid #ffc107;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            color: #856404;
-            font-size: 0.9em;
-        }
-
-        .warning strong {
-            display: block;
-            margin-bottom: 5px;
-        }
-
         .loading {
             display: none;
             text-align: center;
@@ -196,6 +181,17 @@
         <p class="subtitle">Generate a new Bitcoin wallet with a single click</p>
         
         <div class="input-section" style="margin-bottom: 20px;">
+            <label for="walletCountInput" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Number of Wallets</label>
+            <input 
+                type="number" 
+                id="walletCountInput" 
+                placeholder="Enter number of wallets" 
+                min="1"
+                max="20"
+                step="1"
+                value="1"
+                style="width: 100%; padding: 12px; font-size: 1em; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-family: 'Courier New', monospace; margin-bottom: 15px;"
+            />
             <label for="satoshisInput" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Amount (Satoshis)</label>
             <input 
                 type="number" 
@@ -208,7 +204,7 @@
             <small style="display: block; margin-top: 5px; color: #666; font-size: 0.85em;">1 Bitcoin = 100,000,000 Satoshis</small>
         </div>
         
-        <button class="generate-btn" id="generateBtn">Generate New Wallet</button>
+        <button class="generate-btn" id="generateBtn">Generate Wallet(s)</button>
         
         <div class="loading" id="loading">Generating wallet...</div>
         
@@ -247,11 +243,6 @@
                 <button class="copy-btn">Copy</button>
             </div>
             
-            <div class="warning">
-                <strong>⚠️ Security Warning</strong>
-                Keep your private key and mnemonic phrase secure! Never share them with anyone. Anyone with access to these can control your Bitcoin.
-            </div>
-
             <div class="info-section" style="margin-top: 30px;">
                 <div class="info-label">Print Preview</div>
                 <div id="walletPreview" style="width: 100%; margin: 20px auto; background: #f0f0f0; padding: 20px; border-radius: 10px;">
