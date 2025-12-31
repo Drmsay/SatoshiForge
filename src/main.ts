@@ -1,3 +1,4 @@
+import './assets/asset-font.css';
 import { DOM, showLoading, hideLoading, generateWallet } from './ui';
 
 const initializeApp = (): void => {

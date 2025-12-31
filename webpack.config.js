@@ -67,6 +67,10 @@ module.exports = (env, argv) => {
           test: /\.(png|jpg|jpeg|gif|svg)$/i,
           type: 'asset/inline', // Inline images as base64
         },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/i,
+          type: 'asset/inline', // Inline fonts as base64
+        },
       ],
     },
     devServer: {
