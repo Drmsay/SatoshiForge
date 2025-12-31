@@ -1,4 +1,4 @@
-/// <reference types="vite/client" />
+/// <reference types="webpack/modules" />
 
 declare module '*.png' {
   const src: string;

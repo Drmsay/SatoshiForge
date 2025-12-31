@@ -4,7 +4,7 @@ A secure, offline Bitcoin wallet generator that runs entirely in your browser.
 
 ## Project Structure
 
-- `index.html` - Wallet generator page (uses Vite dev server)
+- `index.html` - Wallet generator page (uses Webpack dev server)
 - `src/` - TypeScript source files for wallet generator
 - `dist/` - Built output files
 
@@ -17,7 +17,7 @@ A secure, offline Bitcoin wallet generator that runs entirely in your browser.
 npm install
 ```
 
-2. Start the Vite development server:
+2. Start the Webpack development server:
 ```bash
 npm run dev
 ```
@@ -27,17 +27,11 @@ npm run dev
 
 ### Building for Production
 
-#### Option 1: Build standalone wallet generator (current method)
+Build the standalone wallet generator:
 ```bash
 npm run build
 ```
-This creates a standalone `index.html` with the wallet generator embedded.
-
-#### Option 2: Build with Vite
-```bash
-npm run build:vite
-```
-This builds to the `dist/` folder.
+This creates a standalone `index.html` with all JavaScript and assets inlined into a single file.
 
 ## Features
 
@@ -56,12 +50,7 @@ npm run build
 ```
 
 2. Upload the standalone file:
-   - `dist/index.html` (standalone wallet generator - can be embedded)
-
-3. For the wallet generator page, you can either:
-   - Use the standalone `dist/index.html` and embed it
-   - Host the built files from `dist/` and link to them
-   - Use the Vite build output
+   - `dist/index.html` (standalone wallet generator - all assets inlined, ready to deploy)
 
 ## Security Notes
 

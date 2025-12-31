@@ -1,4 +1,4 @@
-import walletImageUrl from './images/blank wallet image.png';
+import walletImageUrl from './assets/satoshi_dollar.png';
 import type { WalletKeys } from '../types/types';
 import { generateQRCodeDataURL, createQRCodeImage } from './qr-code';
 
