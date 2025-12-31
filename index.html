@@ -167,6 +167,34 @@
             flex-direction: column;
         }
 
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .input-section label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .input-section input {
+            width: 100%;
+            padding: 12px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        .input-section small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 0.85em;
+        }
+
         @media (max-width: 600px) {
             .qr-container {
                 flex-direction: column;
@@ -177,83 +205,81 @@
 </head>
 <body>
     <div class="container">
-        <h1>₿ Bitcoin Wallet Generator</h1>
-        <p class="subtitle">Generate a new Bitcoin wallet with a single click</p>
-        
-        <div class="input-section" style="margin-bottom: 20px;">
-            <label for="walletCountInput" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Number of Wallets</label>
-            <input 
-                type="number" 
-                id="walletCountInput" 
-                placeholder="Enter number of wallets" 
-                min="1"
-                max="20"
-                step="1"
-                value="1"
-                style="width: 100%; padding: 12px; font-size: 1em; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-family: 'Courier New', monospace; margin-bottom: 15px;"
-            />
-            <label for="satoshisInput" style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Amount (Satoshis)</label>
-            <input 
-                type="number" 
-                id="satoshisInput" 
-                placeholder="Enter amount in Satoshis" 
-                min="0"
-                step="1"
-                style="width: 100%; padding: 12px; font-size: 1em; border: 2px solid #e0e0e0; border-radius: 8px; box-sizing: border-box; font-family: 'Courier New', monospace;"
-            />
-            <small style="display: block; margin-top: 5px; color: #666; font-size: 0.85em;">1 Bitcoin = 100,000,000 Satoshis</small>
-        </div>
-        
-        <button class="generate-btn" id="generateBtn">Generate Wallet(s)</button>
-        
-        <div class="loading" id="loading">Generating wallet...</div>
-        
-        <div class="wallet-info" id="walletInfo">
-            <div class="info-section">
-                <div class="info-label">Bitcoin Address (Segwit)</div>
-                <div class="info-content">
-                    <div class="info-value" id="address"></div>
-                    <div class="qr-container">
-                        <div class="qr-code-wrapper">
-                            <div class="qr-label">Address QR Code</div>
-                            <div class="qr-code" id="addressQR"></div>
+                <h1>₿ Bitcoin Wallet Generator</h1>
+                <p class="subtitle">Generate a new Bitcoin wallet with a single click</p>
+                
+                <div class="input-section">
+                    <label for="walletCountInput">Number of Wallets</label>
+                    <input 
+                        type="number" 
+                        id="walletCountInput" 
+                        placeholder="Enter number of wallets" 
+                        min="1"
+                        max="20"
+                        step="1"
+                        value="1"
+                    />
+                    <label for="satoshisInput" style="margin-top: 15px;">Amount (Satoshis)</label>
+                    <input 
+                        type="number" 
+                        id="satoshisInput" 
+                        placeholder="Enter amount in Satoshis" 
+                        min="0"
+                        step="1"
+                    />
+                    <small>1 Bitcoin = 100,000,000 Satoshis</small>
+                </div>
+                
+                <button class="generate-btn" id="generateBtn">Generate Wallet(s)</button>
+                
+                <div class="loading" id="loading">Generating wallet...</div>
+                
+                <div class="wallet-info" id="walletInfo">
+                    <div class="info-section">
+                        <div class="info-label">Bitcoin Address (Segwit)</div>
+                        <div class="info-content">
+                            <div class="info-value" id="address"></div>
+                            <div class="qr-container">
+                                <div class="qr-code-wrapper">
+                                    <div class="qr-label">Address QR Code</div>
+                                    <div class="qr-code" id="addressQR"></div>
+                                </div>
+                            </div>
+                            <button class="copy-btn">Copy</button>
                         </div>
                     </div>
-                    <button class="copy-btn">Copy</button>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <div class="info-label">Private Key (WIF)</div>
-                <div class="info-content">
-                    <div class="info-value" id="privateKey"></div>
-                    <div class="qr-container">
-                        <div class="qr-code-wrapper">
-                            <div class="qr-label">Private Key QR Code</div>
-                            <div class="qr-code" id="privateKeyQR"></div>
+                    
+                    <div class="info-section">
+                        <div class="info-label">Private Key (WIF)</div>
+                        <div class="info-content">
+                            <div class="info-value" id="privateKey"></div>
+                            <div class="qr-container">
+                                <div class="qr-code-wrapper">
+                                    <div class="qr-label">Private Key QR Code</div>
+                                    <div class="qr-code" id="privateKeyQR"></div>
+                                </div>
+                            </div>
+                            <button class="copy-btn">Copy</button>
                         </div>
                     </div>
-                    <button class="copy-btn">Copy</button>
-                </div>
-            </div>
-            
-            <div class="info-section">
-                <div class="info-label">Mnemonic Phrase (12 words)</div>
-                <div class="info-value" id="mnemonic"></div>
-                <button class="copy-btn">Copy</button>
-            </div>
-            
-            <div class="info-section" style="margin-top: 30px;">
-                <div class="info-label">Print Preview</div>
-                <div id="walletPreview" style="width: 100%; margin: 20px auto; background: #f0f0f0; padding: 20px; border-radius: 10px;">
-                    <!-- Preview will be generated here -->
-                </div>
-            </div>
+                    
+                    <div class="info-section">
+                        <div class="info-label">Mnemonic Phrase (12 words)</div>
+                        <div class="info-value" id="mnemonic"></div>
+                        <button class="copy-btn">Copy</button>
+                    </div>
+                    
+                    <div class="info-section" style="margin-top: 30px;">
+                        <div class="info-label">Print Preview</div>
+                        <div id="walletPreview" style="width: 100%; margin: 20px auto; background: #f0f0f0; padding: 20px; border-radius: 10px;">
+                            <!-- Preview will be generated here -->
+                        </div>
+                    </div>
 
-            <button class="generate-btn" id="printBtn" style="margin-top: 20px; background: #28a745;">
-                🖨️ Print
-            </button>
-        </div>
+                    <button class="generate-btn" id="printBtn" style="margin-top: 20px; background: #28a745;">
+                        🖨️ Print
+                    </button>
+                </div>
     </div>
 
     <script type="module" src="/src/main.ts"></script>

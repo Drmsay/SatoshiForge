@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 export default defineConfig({
+  root: '.',
+  publicDir: 'public',
   plugins: [
     nodePolyfills({
       // Whether to polyfill `node:` protocol imports.

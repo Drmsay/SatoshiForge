@@ -3,6 +3,11 @@ node_modules/
 
 # Build output
 dist/
+js/
+
+# Generated bundles
+*.bundle.js
+bundle*.js
 
 # Environment variables
 .env
