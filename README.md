@@ -23,6 +23,19 @@ All wallet generation happens client-side. Private keys never leave the device. 
 
 Built with TypeScript and Webpack. Bundles everything into a single HTML file with all assets inlined. Uses polyfills to make Node.js-based Bitcoin libraries work in browsers. Implements Content Security Policy headers and stores wallet data in module scope.
 
+## Development
+
+### Installation
+```bash
+npm install
+```
+
+### Production Build
+```bash
+npm run build
+```
+Generates `dist/index.html` - a single self-contained file ready for deployment.
+
 ## Security Considerations
 
 Browser extensions may access page content - disable extensions when generating wallets. Always deploy over HTTPS. Verify generated addresses on the blockchain before sending funds. Physical security of paper wallets is critical.
