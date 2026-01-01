@@ -1,3 +1,7 @@
+/**
+ * UI management module
+ * Handles DOM manipulation, wallet display, and user interactions
+ */
 import type { Wallet } from '../types/types';
 import { displayQRCode } from './qr-code';
 import { generateCompositeImage, generateMultiWalletCompositeImage } from './image-composition';
@@ -44,6 +48,10 @@ export const displayWalletInfo = (wallet: Wallet): void => {
   DOM.mnemonic().textContent = wallet.mnemonic;
 };
 
+/**
+ * Displays multiple wallets in the UI
+ * Creates separate sections for each wallet with QR codes and copy buttons
+ */
 export const displayAllWalletsInfo = async (wallets: Wallet[]): Promise<void> => {
   const walletInfoContainer = DOM.walletInfo();
   
@@ -55,19 +63,18 @@ export const displayAllWalletsInfo = async (wallets: Wallet[]): Promise<void> =>
   walletInfoContainer.innerHTML = '';
   
   // Add all wallet sections
-  for (let index = 0; index < wallets.length; index++) {
-    const wallet = wallets[index];
+  for (const [index, wallet] of wallets.entries()) {
     const walletSection = document.createElement('div');
     walletSection.className = 'wallet-section';
     walletSection.style.marginBottom = '30px';
     walletSection.style.border = '2px solid #e0e0e0';
-    walletSection.style.borderRadius = '10px';
+    walletSection.style.borderRadius = '0';
     walletSection.style.padding = '20px';
     walletSection.style.backgroundColor = '#f8f9fa';
     
     const walletTitle = document.createElement('h3');
     walletTitle.textContent = `Wallet ${index + 1}${wallet.satoshis ? ` - ${wallet.satoshis.toLocaleString()} Satoshis` : ''}`;
-    walletTitle.style.color = '#667eea';
+    walletTitle.style.color = 'white';
     walletTitle.style.marginBottom = '20px';
     walletTitle.style.fontSize = '1.2em';
     walletSection.appendChild(walletTitle);
@@ -137,9 +144,9 @@ export const displayAllWalletsInfo = async (wallets: Wallet[]): Promise<void> =>
     const newPrintButton = document.createElement('button');
     newPrintButton.id = 'printBtn';
     newPrintButton.className = 'generate-btn';
-    newPrintButton.textContent = '🖨️ Print';
+    newPrintButton.textContent = 'Print';
     newPrintButton.style.marginTop = '20px';
-    newPrintButton.style.background = '#28a745';
+    newPrintButton.style.background = '#ff8e19';
     walletInfoContainer.appendChild(newPrintButton);
   }
 };
@@ -171,9 +178,9 @@ export const displayCompositeImage = (imageDataURL: string): void => {
         <img 
           src="${imageDataURL}" 
           alt="Wallet with Keys and QR Codes" 
-          style="width: ${displayWidth}px; height: ${displayHeight}px; max-width: 100%; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: block; margin: 0 auto;" 
+          style="width: ${displayWidth}px; height: ${displayHeight}px; max-width: 100%; border-radius: 0; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: block; margin: 0 auto;" 
         />
-        <p style="margin-top: 10px; color: #666; font-size: 0.9em;">Preview (scaled to fit). Actual print size: ${naturalWidth}px × ${naturalHeight}px</p>
+        <p style="margin-top: 10px; color: white; font-size: 0.9em;">Preview (scaled to fit). Actual print size: ${naturalWidth}px × ${naturalHeight}px</p>
       </div>
     `;
   };
@@ -187,31 +194,47 @@ export const displayCompositeImage = (imageDataURL: string): void => {
   img.src = imageDataURL;
 };
 
+// Module-level storage for wallet data (replaces window object storage)
+const walletData: {
+  wallets?: Wallet[];
+  compositeImage?: string;
+  individualImages?: string[];
+} = {};
+
 export const storeWalletData = (wallets: Wallet | Wallet[], compositeImage: string, individualImages?: string[]): void => {
-  (window as any).currentWallets = wallets;
-  (window as any).compositeWalletImage = compositeImage;
-  (window as any).individualWalletImages = individualImages;
+  walletData.wallets = Array.isArray(wallets) ? wallets : [wallets];
+  walletData.compositeImage = compositeImage;
+  walletData.individualImages = individualImages;
 };
+
+export const getWalletData = (): typeof walletData => walletData;
 
 const copyToClipboard = (id: string, button: HTMLButtonElement): void => {
   const element = getDOMElement<HTMLDivElement>(id);
   const text = element.textContent || '';
 
-  navigator.clipboard.writeText(text).then(() => {
+  const handleSuccess = () => {
     const originalText = button.textContent || '';
     button.textContent = 'Copied!';
-    button.style.background = '#28a745';
+    button.style.background = '#ff8e19';
 
     setTimeout(() => {
       button.textContent = originalText;
       button.style.background = '';
     }, 2000);
-  }).catch(err => {
-    console.error('Failed to copy:', err);
+  };
+
+  const handleError = () => {
     alert('Failed to copy to clipboard');
-  });
+  };
+
+  navigator.clipboard.writeText(text).then(handleSuccess, handleError);
 };
 
+/**
+ * Sets up copy-to-clipboard functionality for all wallet data
+ * Handles both single and multiple wallet scenarios
+ */
 export const setupCopyButtons = (): void => {
   // Handle single wallet copy buttons
   const getCopyButton = (sectionId: string) => {
@@ -242,25 +265,33 @@ export const setupCopyButtons = (): void => {
         const element = document.getElementById(copyId);
         if (element) {
           const text = element.textContent || '';
-          navigator.clipboard.writeText(text).then(() => {
+          
+          const handleSuccess = () => {
             const originalText = btn.textContent || '';
             (btn as HTMLButtonElement).textContent = 'Copied!';
-            (btn as HTMLButtonElement).style.background = '#28a745';
+            (btn as HTMLButtonElement).style.background = '#ff8e19';
 
             setTimeout(() => {
               (btn as HTMLButtonElement).textContent = originalText;
               (btn as HTMLButtonElement).style.background = '';
             }, 2000);
-          }).catch(err => {
-            console.error('Failed to copy:', err);
+          };
+
+          const handleError = () => {
             alert('Failed to copy to clipboard');
-          });
+          };
+
+          navigator.clipboard.writeText(text).then(handleSuccess, handleError);
         }
       });
     }
   });
 };
 
+/**
+ * Main wallet generation handler
+ * Generates one or more wallets, displays them, and creates printable images
+ */
 export const generateWallet = async (): Promise<void> => {
   // Get wallet count from input
   const walletCountInput = DOM.walletCountInput();
@@ -289,11 +320,10 @@ export const generateWallet = async (): Promise<void> => {
   }
 
   // Generate multiple wallets
-  const wallets: Wallet[] = [];
-  for (let i = 0; i < walletCount; i++) {
+  const wallets: Wallet[] = Array.from({ length: walletCount }, () => {
     const wallet = generateBitcoinWallet();
-    wallets.push({ ...wallet, satoshis });
-  }
+    return { ...wallet, satoshis };
+  });
 
   // Display all wallet information
   if (walletCount === 1) {

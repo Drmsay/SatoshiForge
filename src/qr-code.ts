@@ -1,3 +1,7 @@
+/**
+ * QR code generation module
+ * Creates QR codes for Bitcoin addresses and private keys
+ */
 import QRCode from 'qrcode';
 
 const QR_CODE_OPTIONS = {
@@ -6,6 +10,9 @@ const QR_CODE_OPTIONS = {
   color: { dark: '#000000', light: '#FFFFFF' }
 } as const;
 
+/**
+ * Generates a QR code as a base64 data URL
+ */
 export const generateQRCodeDataURL = async (text: string): Promise<string> => {
   return QRCode.toDataURL(text, QR_CODE_OPTIONS);
 };
@@ -19,6 +26,9 @@ export const createQRCodeImage = (dataURL: string): Promise<HTMLImageElement> =>
   });
 };
 
+/**
+ * Generates and displays a QR code in the specified container element
+ */
 export const displayQRCode = async (text: string, container: HTMLDivElement): Promise<void> => {
   container.innerHTML = '';
   const qrDataUrl = await generateQRCodeDataURL(text);

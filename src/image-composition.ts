@@ -1,7 +1,15 @@
+/**
+ * Image composition module
+ * Generates printable wallet images with QR codes, addresses, and private keys overlaid on template
+ */
 import walletImageUrl from './assets/satoshi_dollar.png';
 import type { WalletKeys } from '../types/types';
 import { generateQRCodeDataURL, createQRCodeImage } from './qr-code';
 
+/**
+ * Configuration for wallet image composition
+ * Defines positions, sizes, and styling for all elements
+ */
 const COMPOSITION_CONFIG = {
   qrSize: 120,
   addressPosition: { x: 0.05, y: 0.40 },
@@ -85,6 +93,10 @@ const drawKeyText = (
   ctx.restore(); // Restore the context state
 };
 
+/**
+ * Calculates optimal font size to fit text within maxWidth
+ * Reduces font size iteratively until text fits
+ */
 const calculateOptimalFontSize = (
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -187,6 +199,10 @@ const drawSatoshisNumber = (
   ctx.shadowOffsetY = 0;
 };
 
+/**
+ * Generates a single wallet composite image
+ * Combines template image with QR codes, addresses, private keys, and satoshi amounts
+ */
 export const generateCompositeImage = async (wallet: WalletKeys): Promise<string> => {
   // Wait for fonts to load, specifically the Asset font
   await document.fonts.ready;
@@ -265,6 +281,10 @@ export const generateCompositeImage = async (wallet: WalletKeys): Promise<string
   return canvas.toDataURL('image/png');
 };
 
+/**
+ * Generates a composite image containing multiple wallets stacked vertically
+ * Used for printing multiple wallets on a single page
+ */
 export const generateMultiWalletCompositeImage = async (wallets: WalletKeys[]): Promise<string> => {
   // Wait for fonts to load
   await document.fonts.ready;
@@ -303,12 +323,12 @@ export const generateMultiWalletCompositeImage = async (wallets: WalletKeys[]): 
   ctx.fillRect(0, 0, totalWidth, totalHeight);
   
   // Draw each wallet image stacked vertically
-  for (let i = 0; i < loadedImages.length; i++) {
+  loadedImages.forEach((img, i) => {
     const x = padding;
     const y = padding + (i * (singleWalletHeight + gap));
     
-    ctx.drawImage(loadedImages[i], x, y);
-  }
+    ctx.drawImage(img, x, y);
+  });
   
   return canvas.toDataURL('image/png');
 };

@@ -3,7 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bitcoin Wallet Generator</title>
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self' 'unsafe-inline'; 
+                   style-src 'self' 'unsafe-inline'; 
+                   img-src 'self' data:; 
+                   font-src 'self' data:; 
+                   connect-src 'none';
+                   base-uri 'self';
+                   form-action 'none';
+                   frame-ancestors 'none';">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Referrer-Policy" content="no-referrer">
+    <title>Paper Wallet Generator</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +26,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: white;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -22,8 +35,8 @@
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
+            background: #673500;
+            border-radius: 0;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             padding: 40px;
             max-width: 600px;
@@ -31,7 +44,7 @@
         }
 
         h1 {
-            color: #333;
+            color: white;
             text-align: center;
             margin-bottom: 10px;
             font-size: 2.5em;
@@ -39,7 +52,7 @@
 
         .subtitle {
             text-align: center;
-            color: #666;
+            color: white;
             margin-bottom: 30px;
             font-size: 0.9em;
         }
@@ -50,9 +63,9 @@
             font-size: 1.2em;
             font-weight: bold;
             color: white;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ff8e19;
             border: none;
-            border-radius: 10px;
+            border-radius: 0;
             cursor: pointer;
             transition: transform 0.2s, box-shadow 0.2s;
             margin-bottom: 30px;
@@ -60,7 +73,7 @@
 
         .generate-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 20px rgba(255, 142, 25, 0.4);
         }
 
         .generate-btn:active {
@@ -77,15 +90,16 @@
         }
 
         .info-section {
-            background: #f8f9fa;
-            border-radius: 10px;
+            background: #673500;
+            border-radius: 0;
             padding: 20px;
             margin-bottom: 20px;
+            border: 2px solid #ff8e19;
         }
 
         .info-label {
             font-weight: bold;
-            color: #667eea;
+            color: white;
             margin-bottom: 8px;
             font-size: 0.9em;
             text-transform: uppercase;
@@ -93,36 +107,36 @@
         }
 
         .info-value {
-            color: #333;
+            color: white;
             word-break: break-all;
             font-family: 'Courier New', monospace;
             font-size: 0.95em;
-            background: white;
+            background: #673500;
             padding: 12px;
-            border-radius: 5px;
-            border: 1px solid #e0e0e0;
+            border-radius: 0;
+            border: 2px solid #ff8e19;
         }
 
         .copy-btn {
             margin-top: 8px;
             padding: 6px 12px;
             font-size: 0.85em;
-            background: #667eea;
+            background: #ff8e19;
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 0;
             cursor: pointer;
             transition: background 0.2s;
         }
 
         .copy-btn:hover {
-            background: #5568d3;
+            background: #e68016;
         }
 
         .loading {
             display: none;
             text-align: center;
-            color: #667eea;
+            color: white;
             font-weight: bold;
             margin-top: 20px;
         }
@@ -146,16 +160,16 @@
         }
 
         .qr-code {
-            background: white;
+            background: #673500;
             padding: 10px;
-            border-radius: 8px;
-            border: 2px solid #e0e0e0;
+            border-radius: 0;
+            border: 2px solid #ff8e19;
             display: inline-block;
         }
 
         .qr-label {
             font-size: 0.8em;
-            color: #666;
+            color: white;
             font-weight: 500;
         }
 
@@ -172,7 +186,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: #333;
+            color: white;
         }
 
         .input-section input {
@@ -180,7 +194,7 @@
             padding: 12px;
             font-size: 1em;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
+            border-radius: 0;
             box-sizing: border-box;
             font-family: 'Courier New', monospace;
         }
@@ -188,7 +202,7 @@
         .input-section small {
             display: block;
             margin-top: 5px;
-            color: #666;
+            color: white;
             font-size: 0.85em;
         }
 
@@ -202,8 +216,8 @@
 </head>
 <body>
     <div class="container">
-                <h1>₿ Bitcoin Wallet Generator</h1>
-                <p class="subtitle">Generate a new Bitcoin wallet with a single click</p>
+                <h1>₿ Paper Wallet Generator</h1>
+                <p class="subtitle">Generate a Bitcoin paper wallet with a single click</p>
                 
                 <div class="input-section">
                     <label for="walletCountInput">Number of Wallets</label>
@@ -268,13 +282,13 @@
                     
                     <div class="info-section" style="margin-top: 30px;">
                         <div class="info-label">Print Preview</div>
-                        <div id="walletPreview" style="width: 100%; margin: 20px auto; background: #f0f0f0; padding: 20px; border-radius: 10px;">
+                        <div id="walletPreview" style="width: 100%; margin: 20px auto; background: #673500; padding: 20px; border-radius: 0;">
                             <!-- Preview will be generated here -->
                         </div>
                     </div>
 
-                    <button class="generate-btn" id="printBtn" style="margin-top: 20px; background: #28a745;">
-                        🖨️ Print
+                    <button class="generate-btn" id="printBtn" style="margin-top: 20px; background: #ff8e19;">
+                        Print
                     </button>
                 </div>
     </div>

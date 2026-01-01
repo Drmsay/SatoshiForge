@@ -1,3 +1,7 @@
+/**
+ * Bitcoin wallet generation module
+ * Generates BIP39 mnemonic, derives HD wallet, and creates SegWit addresses
+ */
 import * as bitcoin from 'bitcoinjs-lib';
 import * as bip39 from 'bip39';
 import { BIP32Factory } from 'bip32';
@@ -5,12 +9,18 @@ import * as ecc from '@bitcoinerlab/secp256k1';
 import { ECPairFactory } from 'ecpair';
 import type { Wallet } from '../types/types';
 
+/**
+ * Generates a BIP39 mnemonic phrase (12 words)
+ */
 const createMnemonic = (): string => {
   const mnemonic = bip39.generateMnemonic();
   if (!mnemonic) throw new Error('Failed to generate mnemonic');
   return mnemonic;
 };
 
+/**
+ * Converts mnemonic phrase to seed using PBKDF2
+ */
 const createSeed = (mnemonic: string): Buffer => {
   const seed = bip39.mnemonicToSeedSync(mnemonic);
   if (!seed || seed.length === 0) throw new Error('Failed to generate seed from mnemonic');
@@ -43,6 +53,9 @@ const createKeyPair = (privateKey: Buffer, network: bitcoin.Network) => {
   return keyPair;
 };
 
+/**
+ * Generates a SegWit (P2WPKH) Bitcoin address from public key
+ */
 const generateAddress = (publicKey: Buffer, network: bitcoin.Network): string => {
   const pubkeyBuffer = Buffer.isBuffer(publicKey) ? publicKey : Buffer.from(publicKey);
   if (!pubkeyBuffer || pubkeyBuffer.length === 0) throw new Error('Invalid public key buffer');
@@ -68,12 +81,17 @@ const convertPrivateKeyToWIF = (keyPair: ReturnType<typeof createKeyPair>): stri
   return privateKey;
 };
 
+/**
+ * Main wallet generation function
+ * Creates a complete Bitcoin wallet with mnemonic, private key (WIF), and SegWit address
+ * Uses BIP84 derivation path (m/84'/0'/0'/0/0) for native SegWit
+ */
 export const generateBitcoinWallet = (): Wallet => {
   const mnemonic = createMnemonic();
   const seed = createSeed(mnemonic);
   const network = getBitcoinNetwork();
   const root = createHDWallet(seed, network);
-  const path = "m/84'/0'/0'/0/0";
+  const path = "m/84'/0'/0'/0/0"; // BIP84: native SegWit derivation path
   const { privateKey: derivedPrivateKey } = deriveWalletPath(root, path);
   const keyPair = createKeyPair(derivedPrivateKey, network);
   const address = generateAddress(keyPair.publicKey, network);

@@ -17,6 +17,7 @@ module.exports = (env, argv) => {
     },
     resolve: {
       extensions: ['.ts', '.tsx', '.js', '.jsx'],
+      // Polyfills for Node.js modules to work in browser
       fallback: {
         "crypto": require.resolve("crypto-browserify"),
         "stream": require.resolve("stream-browserify"),
@@ -24,18 +25,21 @@ module.exports = (env, argv) => {
         "util": require.resolve("util"),
         "assert": require.resolve("assert"),
         "url": require.resolve("url"),
-        "fs": false,
+        "fs": false, // File system not available in browser
         "path": require.resolve("path-browserify"),
       }
     },
     plugins: [
+      // Provide global Buffer and process for Node.js compatibility
       new webpack.ProvidePlugin({
         Buffer: ['buffer', 'Buffer'],
         process: 'process/browser',
       }),
+      // Define global as globalThis for browser compatibility
       new webpack.DefinePlugin({
         'global': 'globalThis',
       }),
+      // Generate HTML from template
       new HtmlWebpackPlugin({
         template: './index.html',
         inject: 'body',
@@ -45,6 +49,7 @@ module.exports = (env, argv) => {
           removeRedundantAttributes: true,
         } : false,
       }),
+      // Inline all assets into single HTML file (production only)
       ...(isProduction ? [new WebpackInlinePlugin()] : []),
     ].filter(Boolean),
     module: {

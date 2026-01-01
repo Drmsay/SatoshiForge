@@ -1,3 +1,8 @@
+/**
+ * Print functionality module
+ * Handles printing of wallet images with proper page break formatting
+ */
+import { getWalletData } from './ui';
 const PRINT_STYLES = `
   @media print {
     @page {
@@ -68,6 +73,10 @@ const PRINT_STYLES = `
   }
 `;
 
+/**
+ * Creates HTML document for printing wallet images
+ * Supports multiple wallets per page with proper page break handling
+ */
 const createPrintHTML = (imageDataURLs: string | string[]): string => {
   const images = Array.isArray(imageDataURLs) ? imageDataURLs : [imageDataURLs];
   
@@ -105,9 +114,14 @@ const triggerPrint = (printWindow: Window): void => {
   };
 };
 
+/**
+ * Main print function - opens print dialog with wallet images
+ * Prefers individual wallet images for better page break control
+ */
 export const printWallet = (): void => {
-  const individualImages = (window as any).individualWalletImages;
-  const compositeImage = (window as any).compositeWalletImage;
+  const data = getWalletData();
+  const individualImages = data.individualImages;
+  const compositeImage = data.compositeImage;
   
   if (!compositeImage) {
     alert('Please generate wallet(s) first');

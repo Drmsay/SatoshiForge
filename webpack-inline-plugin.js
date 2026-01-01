@@ -1,3 +1,7 @@
+/**
+ * Webpack plugin to inline all assets into a single HTML file
+ * Converts JavaScript, CSS, and fonts to inline content for standalone deployment
+ */
 const fs = require('fs');
 const path = require('path');
 
@@ -10,6 +14,7 @@ class WebpackInlinePlugin {
   }
 
   apply(compiler) {
+    // Hook into afterEmit to process files after webpack writes them
     compiler.hooks.afterEmit.tapAsync('WebpackInlinePlugin', (compilation, callback) => {
       const distDir = compiler.options.output.path;
       const htmlPath = path.join(distDir, 'index.html');
@@ -48,20 +53,20 @@ class WebpackInlinePlugin {
         }
       }
 
-      // Inline JavaScript
+      // Inline JavaScript bundle
       if (fs.existsSync(jsPath)) {
         let js = fs.readFileSync(jsPath, 'utf8');
         
         // Remove source map references
         js = js.replace(/\/\/# sourceMappingURL=.*$/gm, '');
-        // Escape </script> tags (multi-pass to catch all)
+        // Escape </script> tags to prevent premature script termination (multi-pass)
         let escapedJS = js;
         let iterations = 0;
         while (escapedJS.includes('</script>') && iterations < 10) {
           escapedJS = escapedJS.replace(/<\/script>/gi, '<\\/script>');
           iterations++;
         }
-        // Replace script tag with inline script
+        // Replace external script tag with inline script
         html = html.replace(
           /<script[^>]*src=["'][^"']*bundle\.js["'][^>]*><\/script>/gi,
           `<script>${escapedJS}</script>`
@@ -69,19 +74,19 @@ class WebpackInlinePlugin {
         console.log('✓ Inlined JavaScript');
       }
 
-      // Inline CSS
+      // Inline CSS if extracted separately
       if (fs.existsSync(cssPath)) {
         const css = fs.readFileSync(cssPath, 'utf8');
-        // Find and replace link tag or add style tag
+        // Inject CSS into head
         if (html.includes('</head>')) {
           html = html.replace('</head>', `<style>${css}</style></head>`);
         }
-        // Remove CSS link if exists
+        // Remove external CSS link if exists
         html = html.replace(/<link[^>]*href=["'][^"']*main\.css["'][^>]*>/gi, '');
         console.log('✓ Inlined CSS');
       }
 
-      // Remove external font links (fonts are now inlined)
+      // Remove external Google Fonts links (font is now inlined)
       html = html.replace(/<link[^>]*href=["']https:\/\/fonts\.googleapis\.com[^"']*["'][^>]*>/gi, '');
       html = html.replace(/<link[^>]*rel=["']preconnect["'][^>]*>/gi, '');
 
@@ -90,17 +95,13 @@ class WebpackInlinePlugin {
       console.log('✓ Created standalone HTML file');
 
       // Clean up separate files
-      try {
-        if (fs.existsSync(jsPath)) {
-          fs.unlinkSync(jsPath);
-        }
-        if (fs.existsSync(cssPath)) {
-          fs.unlinkSync(cssPath);
-        }
-        console.log('✓ Removed separate bundle files');
-      } catch (err) {
-        console.warn('⚠️  Could not remove bundle files:', err.message);
+      if (fs.existsSync(jsPath)) {
+        fs.unlinkSync(jsPath);
       }
+      if (fs.existsSync(cssPath)) {
+        fs.unlinkSync(cssPath);
+      }
+      console.log('✓ Removed separate bundle files');
 
       callback();
     });
