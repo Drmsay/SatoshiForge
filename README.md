@@ -1,65 +1,32 @@
-# Bitcoin Wallet Generator
+# Paper Wallet Generator
 
-A secure, offline Bitcoin wallet generator that runs entirely in your browser.
+A Bitcoin wallet generator that runs entirely in your web browser. Generates printable paper wallets with QR codes for use in areas with limited technology infrastructure.
 
-## Project Structure
+## Overview
 
-- `index.html` - Wallet generator page (uses Webpack dev server)
-- `src/` - TypeScript source files for wallet generator
-- `dist/` - Built output files
+Creates Bitcoin wallets that can be printed on paper. Users generate wallets in their browser and print them for physical use. The entire process happens on the user's device - nothing gets sent to a server.
 
-## Development
+The project targets regions where traditional banking isn't available but people have smartphones and basic internet access.
 
-### Running the Development Server
+## Functionality
 
-1. Install dependencies:
-```bash
-npm install
-```
+### Wallet Generation
+Creates Bitcoin wallets using BIP39 and BIP84 standards. Generates 12-word recovery phrases, SegWit addresses, and private keys in WIF format.
 
-2. Start the Webpack development server:
-```bash
-npm run dev
-```
+### User Features
+Generate one or multiple wallets (up to 20). View wallet information with QR codes for easy scanning. Print wallet cards with all information embedded.
 
-3. Access the wallet generator:
-   - `http://localhost:3000/` or `http://localhost:3000/index.html`
+### Security
+All wallet generation happens client-side. Private keys never leave the device. No network calls after initial page load. Security headers prevent common web attacks.
 
-### Building for Production
+## Technical Implementation
 
-Build the standalone wallet generator:
-```bash
-npm run build
-```
-This creates a standalone `index.html` with all JavaScript and assets inlined into a single file.
+Built with TypeScript and Webpack. Bundles everything into a single HTML file with all assets inlined. Uses polyfills to make Node.js-based Bitcoin libraries work in browsers. Implements Content Security Policy headers and stores wallet data in module scope.
 
-## Features
+## Security Considerations
 
-- Generate single or multiple Bitcoin wallets
-- Display wallet information with QR codes
-- Print functionality for physical backup cards
-- All processing happens client-side (no server required)
-
-## Deployment
-
-For Sitejet or other static hosting:
-
-1. Build the wallet generator:
-```bash
-npm run build
-```
-
-2. Upload the standalone file:
-   - `dist/index.html` (standalone wallet generator - all assets inlined, ready to deploy)
-
-## Security Notes
-
-- All wallet generation happens client-side
-- No data is sent to any server
-- Private keys never leave your device
-- Always verify wallet addresses before use
+Browser extensions may access page content - disable extensions when generating wallets. Always deploy over HTTPS. Verify generated addresses on the blockchain before sending funds. Physical security of paper wallets is critical.
 
 ## License
 
 MIT
-

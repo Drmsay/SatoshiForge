@@ -180,7 +180,7 @@ export const displayCompositeImage = (imageDataURL: string): void => {
           alt="Wallet with Keys and QR Codes" 
           style="width: ${displayWidth}px; height: ${displayHeight}px; max-width: 100%; border-radius: 0; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: block; margin: 0 auto;" 
         />
-        <p style="margin-top: 10px; color: white; font-size: 0.9em;">Preview (scaled to fit). Actual print size: ${naturalWidth}px × ${naturalHeight}px</p>
+        <p style="margin-top: 10px; color: white; font-size: 0.9em;">Print preview. Printing scale may need to be adjusted for different paper sizing</p>
       </div>
     `;
   };
